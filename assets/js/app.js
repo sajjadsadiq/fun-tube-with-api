@@ -1,12 +1,23 @@
+// Seleceted Elements
 const categoryButtonContainer = document.getElementById(
   "category-botton-container"
 );
 const videosContainer = document.getElementById("videos-container");
 const errorEl = document.getElementById("error");
 const loadingSpinner = document.getElementById("loading-spinner");
+const sortedEl = document.getElementById("sorted-btn");
 
+// Initialize Value
 let selectedCategory = 1000;
+let sorted = true;
 
+// Sort Add Event Listener
+sortedEl.addEventListener("click", () => {
+  sorted = true;
+  fetchDataByCategories(selectedCategory, sorted);
+});
+
+// Button Fetch
 const categoriesButtonFetch = async () => {
   loadingSpinnerFun(true);
   const url = "https://openapi.programming-hero.com/api/videos/categories";
@@ -39,17 +50,34 @@ const categoriesButtonFetch = async () => {
   });
 };
 
-const fetchDataByCategories = async (cetegoryID) => {
+// Categories Fatch
+const fetchDataByCategories = async (cetegoryID, sorted) => {
   selectedCategory = cetegoryID;
   const url = `https://openapi.programming-hero.com/api/videos/category/${cetegoryID}`;
   const res = await fetch(url);
   const data = await res.json();
   const videos = data.data;
-  if (videos.length === 0) {
-    // const error = document.createElement("p");
-    // error.innerText = "Sorry, No Vidoe Found!";
-    // videosContainer.appendChild(error);
+  if (sorted) {
+    videos.sort((a, b) => {
+      // console.log(a.others?.views, b.others?.views)
 
+      // First;
+      const totalViewStringFirst = a.others?.views;
+      // const totalViewNumberFirst = parseFloat(totalViewStringFirst);
+      const totalViewNumberFirst =
+        parseFloat(totalViewStringFirst.replace("K", "")) || 0;
+
+      // second
+      const totalViewStringSecond = b.others?.views;
+      const totalViewNumberSecond =
+        parseFloat(totalViewStringSecond.replace("K", "")) || 0;
+
+      // total
+      const total = totalViewNumberSecond - totalViewNumberFirst;
+      return total;
+    });
+  }
+  if (videos.length === 0) {
     errorEl.classList.remove("hidden");
   } else {
     errorEl.classList.add("hidden");
@@ -97,6 +125,7 @@ const fetchDataByCategories = async (cetegoryID) => {
   loadingSpinnerFun(false);
 };
 
+// Loading Spinner
 const loadingSpinnerFun = (isLoadingSpinner) => {
   if (isLoadingSpinner) {
     loadingSpinner.classList.remove("hidden");
@@ -105,7 +134,10 @@ const loadingSpinnerFun = (isLoadingSpinner) => {
   }
 };
 
+// Funtion Default Call
 categoriesButtonFetch();
-fetchDataByCategories(selectedCategory);
+fetchDataByCategories(selectedCategory, sorted);
 
-//  ${verified} ? <strong class="text-green-600">Verified</strong> : "Not Verified
+
+// const verifiedBadge = authors[0].verified
+//                     ? `<img src="./assets/verified.svg" alt="Verified" />`
