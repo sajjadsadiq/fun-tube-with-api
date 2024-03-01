@@ -15,12 +15,26 @@ const categoriesButtonFetch = async () => {
   const categories = data.data;
   categories.forEach((category) => {
     const categoryButton = document.createElement("button");
-    categoryButton.className = "btn px-8 ml-4";
+    categoryButton.className = "category-btn btn px-8 ml-4";
     categoryButton.innerText = category.category;
     const cetegoryID = category.category_id;
-    categoryButton.addEventListener("click", () =>
-      fetchDataByCategories(cetegoryID)
-    );
+    categoryButton.addEventListener("click", () => {
+      fetchDataByCategories(cetegoryID);
+
+      // Button Color Change
+      const allButton = document.querySelectorAll(".category-btn");
+      for (const btn of allButton) {
+        btn.classList.remove("text-white", "bg-red-600", "hover:bg-red-500");
+      }
+      // allButton.forEach((btn) => {
+      //   btn.classList.remove("text-white", "bg-red-600", "hover:bg-red-500");
+      // });
+      categoryButton.classList.add(
+        "text-white",
+        "bg-red-600",
+        "hover:bg-red-500"
+      );
+    });
     categoryButtonContainer.appendChild(categoryButton);
   });
 };
@@ -70,7 +84,9 @@ const fetchDataByCategories = async (cetegoryID) => {
         ${title}
       </h3>
       <div class="author-view text-sm mt-1">
-        <p class="flex">${profile_name}  <strong class="text-green-600">${verifiedBadge}</strong></p>
+        <p class="flex">${profile_name}  </p>
+        <strong class="text-green-600">${verifiedBadge}</strong>
+        
         <p>${views}</p>
       </div>
     </div>
@@ -91,3 +107,5 @@ const loadingSpinnerFun = (isLoadingSpinner) => {
 
 categoriesButtonFetch();
 fetchDataByCategories(selectedCategory);
+
+//  ${verified} ? <strong class="text-green-600">Verified</strong> : "Not Verified
